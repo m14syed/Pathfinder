@@ -79,29 +79,72 @@ pygame.display.set_caption("Pathfinding Visualizer")
 def heuristic(node1, node2):
     return abs(node1.x - node2.x) + abs(node1.y - node2.y) #Manhattan distance
 
-#Create a grid with each box being a node
-def create_grid(rows, size):
+#Create and drwa a grid with each box being a node
+def create_grid(win, rows, size):
     grid = []
     node_size = size // rows  # Calculate the size of each node
-    # Iterate over each row
+
     for i in range(rows):
         row = []  # Create a new row
-        # Iterate over each column in the row
         for j in range(rows):
             node = Node(i, j, node_size, rows)  # Create a new node
             row.append(node)  # Add the node to the current row
+
+            win.fill((0, 0, 0))  # Fill the window with black
+            node.draw(win)  # Draw the node
+
+            # Draw the grid lines
+            pygame.draw.line(win, (255, 255, 255), (0, i * node_size), (size, i * node_size))  # Draw the horizontal lines
+            pygame.draw.line(win, (255, 255, 255), (j * node_size, 0), (j * node_size, size))  # Draw the vertical lines
+
         grid.append(row)  # Add the current row to the grid
 
     return grid
 
-def draw_grid(win, rows, size):
-    pass
+def mouse_position(pos, rows, size):
+    node_size = size // rows  # Calculate the size of each node
+    x, y = pos
+
+    row = x // node_size
+    col = y // node_size
+
+    return row, col
+
+
+def draw(win, grid, rows, size):
+    win.fill((0, 0, 0))  # Fill the window with black
+
+    for row in grid:
+        for node in row:
+            node.draw(win)  # Draw each node
+
+    pygame.display.update()  # Update the display
+
 
 def main(win, size):
-    
-    run = True
+    numRows = 50
+    grid = create_grid(win, numRows, size)
+
+    run, started, start, end = True, False, None, None
+
     while run:
+        draw(win, grid, numRows, size)
         for event in pygame.event.get():
-            if event.type() == pygame.QUIT:
+            if event.type == pygame.QUIT:
                 run = False
-            
+            if pygame.mouse.get_pressed()[0]:
+                pos = pygame.mouse.get_pos()
+                row, col = mouse_position(pos, 50, size)
+                node = grid[row][col]
+                if not start and node != end:
+                    start = node
+                    start.make_start()
+                elif not end and node != start:
+                    end = node
+                    end.make_end()
+                elif node != end and node != start:
+                    node.make_barrier()
+    
+    pygame.quit()
+
+main(WIN, 800)
