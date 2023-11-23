@@ -90,16 +90,28 @@ def create_grid(win, rows, size):
             node = Node(i, j, node_size, rows)  # Create a new node
             row.append(node)  # Add the node to the current row
 
-            win.fill((0, 0, 0))  # Fill the window with black
-            node.draw(win)  # Draw the node
-
-            # Draw the grid lines
-            pygame.draw.line(win, (255, 255, 255), (0, i * node_size), (size, i * node_size))  # Draw the horizontal lines
-            pygame.draw.line(win, (255, 255, 255), (j * node_size, 0), (j * node_size, size))  # Draw the vertical lines
-
         grid.append(row)  # Add the current row to the grid
 
     return grid
+
+def draw_grid(win, rows, size):
+    node_size = size // rows  # Calculate the size of each node
+
+    for i in range(rows):
+        pygame.draw.line(win, (0, 0, 0), (0, i * node_size), (size, i * node_size))  # Draw a horizontal line
+        for j in range(rows):
+            pygame.draw.line(win, (0, 0, 0), (j * node_size, 0), (j * node_size, size))  # Draw a vertical line
+
+def draw(win, grid, rows, size):
+    win.fill((0, 0, 0))  # Fill the window with black
+
+    for row in grid:
+        for node in row:
+            node.draw(win)  # Draw each node
+
+    draw_grid(win, rows, size)  # Draw the grid
+    pygame.display.update()  # Update the display
+
 
 def mouse_position(pos, rows, size):
     node_size = size // rows  # Calculate the size of each node
@@ -109,16 +121,6 @@ def mouse_position(pos, rows, size):
     col = y // node_size
 
     return row, col
-
-
-def draw(win, grid, rows, size):
-    win.fill((0, 0, 0))  # Fill the window with black
-
-    for row in grid:
-        for node in row:
-            node.draw(win)  # Draw each node
-
-    pygame.display.update()  # Update the display
 
 
 def main(win, size):
