@@ -72,7 +72,7 @@ class Node:
 
 #Make the window and Title
 WIN = pygame.display.set_mode((800, 800))
-pygame.display.set_caption("Pathfinding Visualizer")
+pygame.display.set_caption("Pathfinding Visualizer (Press 's' to start the algorithm, 'c' to clear the grid)")
 
 #Heuristic function
 def heuristic(node1, node2):
